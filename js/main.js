@@ -1,4 +1,4 @@
-///<reference src="player.js"/>
+/// <reference path="player.js" />
 
 var canvas = document.createElement('canvas'),
     context = canvas.getContext("2d"),
@@ -14,13 +14,17 @@ var p1_input = {
     left: false,
     right: false,
     up: false,
-    down:false
+    down:false,
+    attack1: false,
+    attack2: false
 };
 var p2_input = {
     left: false,
     righ: false,
     up: false,
-    down: false
+    down: false,
+    attack1: false,
+    attack2: false
 };
 
 //this is used to check for keydown
@@ -86,6 +90,23 @@ document.body.addEventListener('keyup', function (event) {
     }
 });
 
+document.body.addEventListener('keypress', function(event){
+    //player1 attacks
+    if (event.keyCode == 32){
+        p1_input.attack1 = true;
+    }
+    if (event.key == 'e'){
+        p1_input.attack2 = true;
+    }
+    //player2 attacks
+    if (event.key == ','){
+        p2_input.attack1 = true;
+    }
+    if (event.key == '.'){
+        p2_input.attack2 = true;
+    }
+});
+
 function gameLoop() {
     update();
     draw();
@@ -106,6 +127,11 @@ function update() {
 
     player1.update();
     player2.update();
+
+    p1_input.attack1 = false;
+    p1_input.attack2 = false;
+    p2_input.attack1 = false;
+    p2_input.attack2 = false;
 }
 
 
