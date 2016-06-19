@@ -7,9 +7,11 @@ var canvas = document.createElement('canvas'),
     height = canvas.height = window.innerHeight;
 document.body.appendChild(canvas);
 
-var backgroundColor = '#34495e';
-var player1 = new Player(width/20, height/20, "Red");
-var player2 = new Player(width - 100, height - 100, "green");
+var backgroundColor = '#bdc3c7';
+var hpColor = "#ff1a1a";
+var manaColor = "#0066ff";
+var player1 = new Player(10, height/2, "#8e44ad");
+var player2 = new Player(width - 60, height/2, "#27ae60");
 
 
 var bullet_list = [];
@@ -120,56 +122,76 @@ function gameLoop() {
 
 function update() {
     //player 1 movement
-    if (p1_input.left){
-        player1.dir = Direction.LEFT;
-        player1.x -= player1.speed;
-    }
-    if (p1_input.right) {
-        player1.dir = Direction.RIGHT;
-        player1.x += player1.speed;
-    }
-    if (p1_input.up) {
-        player1.dir = Direction.UP;
-        player1.y -= player1.speed;
-    }
-    if (p1_input.down) {
-        player1.dir = Direction.DOWN
-        player1.y += player1.speed;
-    }
-    //player1 attacks
-    if (p1_input.attack1){
-        if(player1.mana > 0 && player1.mana >= BULLET_COST){
-            var b = new Bullet(player1.x + player1.size/2, player1.y+player1.size/2, player1.dir);
-            bullet_list.push(b);
-            player1.mana -= b.cost;
+    if(!player1.lost){
+        if (p1_input.left){
+            if(!player1.collideLeft(player2)){
+                player1.dir = Direction.LEFT;
+                player1.x -= player1.speed;
+            }
+        }
+        if (p1_input.right) {
+            if(!player1.collideRight(player2)){
+                player1.dir = Direction.RIGHT;
+                player1.x += player1.speed;
+            }
+        }
+        if (p1_input.up) {
+            if( !player1.collideUp(player2)){
+                player1.dir = Direction.UP;
+                player1.y -= player1.speed;
+            }
+        }
+        if (p1_input.down) {
+            if(!player1.collideDown(player2)){
+                player1.dir = Direction.DOWN
+                player1.y += player1.speed;
+            }
+        }
+        //player1 attacks
+        if (p1_input.attack1){
+            if(player1.mana > 0 && player1.mana >= BULLET_COST){
+                var b = new Bullet(player1.x + player1.size/2, player1.y+player1.size/2, player1.dir, player1.color, player1);
+                bullet_list.push(b);
+                player1.mana -= b.cost;
+            }
         }
     }
 
     // player 2 movement
-    if (p2_input.left){
-        player2.dir = Direction.LEFT;   
-        player2.x -= player2.speed;
+    if(!player2.lost){
+        if (p2_input.left){
+            if(!player2.collideLeft(player1)){
+                player2.dir = Direction.LEFT;   
+                player2.x -= player2.speed;
+            }
+        }
+        if (p2_input.right) {
+            if(!player2.collideRight(player1)){
+                player2.dir = Direction.RIGHT;    
+                player2.x += player2.speed;
+            }
+        }
+        if (p2_input.up) {
+            if(!player2.collideUp(player1)){
+                player2.dir = Direction.UP;    
+                player2.y -= player2.speed;
+            }
+        }
+        if (p2_input.down) {
+            if(!player2.collideDown(player1)){
+                player2.dir = Direction.DOWN;
+                player2.y += player2.speed;
+            }
+        }
+        //player2 attacks
+        if (p2_input.attack1){
+            if(player2.mana > 0 && player2.mana >= BULLET_COST){
+                var b = new Bullet(player2.x + player2.size/2, player2.y + player2.size/2, player2.dir, player2.color, player2);
+                bullet_list.push(b);
+                player2.mana -= b.cost;
+            }
+        }
     }
-    if (p2_input.right) {
-        player2.dir = Direction.RIGHT;    
-        player2.x += player2.speed;
-    }
-    if (p2_input.up) {
-        player2.dir = Direction.UP;    
-        player2.y -= player2.speed;
-    }
-    if (p2_input.down) {
-        player2.dir = Direction.DOWN;
-        player2.y += player2.speed;
-    }
-    //player2 attacks
-     if (p2_input.attack1){
-         if(player2.mana > 0 && player2.mana >= BULLET_COST){
-            var b = new Bullet(player2.x + player2.size/2, player2.y + player2.size/2, player2.dir);
-            bullet_list.push(b);
-            player2.mana -= b.cost;
-         }
-     }
 
     player1.update();
     player2.update();
@@ -178,6 +200,27 @@ function update() {
         bullet_list[i].update();
         if (bullet_list[i].destroy){
             bullet_list.splice(i, 1);
+            continue;
+        }
+
+        if(bullet_list[i].parent == player1){
+            if(bullet_list[i].collide(player2)){
+                bullet_list[i].destroy = true;
+                player2.hp -= 20;
+                if(player2.hp <= 0){
+                    player2.hp = 0;
+                    player2.lost = true;
+                }
+            }
+        }else if(bullet_list[i].parent == player2){
+            if(bullet_list[i].collide(player1)){
+                bullet_list[i].destroy = true;
+                player1.hp -= 20;
+                if(player1.hp <= 0) {
+                    player1.hp = 0;
+                    player1.lost = true;
+                }
+            }
         }
     }
 
@@ -187,18 +230,19 @@ function update() {
     p2_input.attack2 = false;
 }
 
-
+var scl = 3;
+var hpHeight = 45;
 function draw() {
     clear();
     //draw hp
-    context.fillStyle = 'Red';
-    context.fillRect(width - 200, 0, player2.hp, 50);
-    context.fillRect(0, 0, player1.hp, 50);
+    context.fillStyle = hpColor;
+    context.fillRect(width - 200*scl, 0, player2.hp*scl, hpHeight);
+    context.fillRect(0, 0, player1.hp*scl, hpHeight);
 
     //draw mana bar
-    context.fillStyle = 'blue';
-    context.fillRect(0, 50,player1.mana, 25);
-    context.fillRect(width - 200, 50, player2.mana, 25);
+    context.fillStyle = manaColor;
+    context.fillRect(0, hpHeight + 2,player1.mana * scl, 20);
+    context.fillRect(width - 200*scl, hpHeight+2, player2.mana * scl, 20);
 
     // draw players
     player1.draw(context);
@@ -207,6 +251,23 @@ function draw() {
     // draw bullets
     for (var i = bullet_list.length-1; i >= 0; i--){
         bullet_list[i].draw(context);
+    }
+
+    if(player1.lost || player2.lost){
+        context.textAlign = "center";
+        context.font = "100px trebuchet";
+        context.fillStyle = "white";
+        // display the winner banner
+        if(player1.lost && player2.lost){
+            // both players los all their health
+            context.fillText("It's a tie!", width/2, height/2);
+        }else if(player1.lost){
+            // just p1 lost all hp
+            context.fillText("Green player wins!", width/2, height/2);
+        }else{
+            // p2 lost all hp
+            context.fillText("Purple player wins!!", width/2, height/2);
+        }
     }
 
 }
