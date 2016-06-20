@@ -37,7 +37,12 @@ function Player(x, y, col) {
         if(!this.lost){
             this.mana += this.manaRegenSpeed;
         }
-        if(this.mana > this.maxMana) this.mana = this.maxMana; 
+        if(this.mana > this.maxMana) this.mana = this.maxMana;
+        //check speed
+        if(this.speed > 5){
+            this.speed -= 0.01;
+        }
+
     };
 
     this.collideRight = function (obj) {

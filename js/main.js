@@ -27,7 +27,7 @@ var p1_input = {
 };
 var p2_input = {
     left: false,
-    righ: false,
+    right: false,
     up: false,
     down: false,
     attack1: false,
@@ -155,6 +155,12 @@ function update() {
                 player1.mana -= b.cost;
             }
         }
+        if (p1_input.attack2){
+            if (player1.mana > 0 && player1.mana >= 20 && player1.speed <=9){
+                player1.speed += 1;
+                player1.mana -= 20;
+            }
+        }
     }
 
     // player 2 movement
@@ -189,6 +195,12 @@ function update() {
                 var b = new Bullet(player2.x + player2.size/2, player2.y + player2.size/2, player2.dir, player2.color, player2);
                 bullet_list.push(b);
                 player2.mana -= b.cost;
+            }
+        }
+        if (p2_input.attack2){
+            if (player2.mana > 0 && player2.mana >= 20 && player2.speed <=9){
+                player2.speed += 1;
+                player2.mana -= 20;
             }
         }
     }
