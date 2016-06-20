@@ -1,20 +1,37 @@
 /// <reference path="player.js" />
 /// <reference path="bullets.js" />
-
 var canvas = document.createElement('canvas'),
     context = canvas.getContext("2d"),
     width = canvas.width = window.innerWidth,
     height = canvas.height = window.innerHeight;
 document.body.appendChild(canvas);
 
-var backgroundColor = '#bdc3c7';
-var hpColor = "#ff1a1a";
-var manaColor = "#0066ff";
-var player1 = new Player(10, height/2, "#8e44ad");
-var player2 = new Player(width - 60, height/2, "#27ae60");
+// create the restart button
+var restartButton = document.createElement("button");
+restartButton.innerText = "Play Again?";
+restartButton.style.display = "none";
+restartButton.style.marginBottom = height / 3 +"px";
+restartButton.onclick = function (event) {
+    init();
+    restartButton.style.display = "none";
+};
+document.body.appendChild(restartButton);
 
-
+var player1;
+var player2;
 var bullet_list = [];
+var manaColor;
+var hpColor;
+var backgroundColor;
+var init;
+(init = function() {
+    backgroundColor = '#bdc3c7';
+    hpColor = "#ff1a1a";
+    manaColor = "#0066ff";
+    player1 = new Player(10, height/2, "#8e44ad");
+    player2 = new Player(width - 60, height/2, "#27ae60");    
+    bullet_list = [];
+})();
 
 
 var p1_input = {
@@ -219,18 +236,20 @@ function update() {
             if(bullet_list[i].collide(player2)){
                 bullet_list[i].destroy = true;
                 player2.hp -= 20;
-                if(player2.hp <= 0){
+                if(player2.hp <= 0){ // player2 death
                     player2.hp = 0;
                     player2.lost = true;
+                    restartButton.style.display = "block";
                 }
             }
         }else if(bullet_list[i].parent == player2){
             if(bullet_list[i].collide(player1)){
                 bullet_list[i].destroy = true;
                 player1.hp -= 20;
-                if(player1.hp <= 0) {
+                if(player1.hp <= 0) { // player1 death
                     player1.hp = 0;
                     player1.lost = true;
+                    restartButton.style.display = "block";
                 }
             }
         }
