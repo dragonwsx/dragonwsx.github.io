@@ -287,7 +287,8 @@ function update() {
         if(bigBullet_list[i].parent == player1){
             if(bigBullet_list[i].collide(player2)){
                 bigBullet_list[i].destroy = true;
-                player2.hp -= 70;
+                player2.hp -= 50;
+                player2.speed -=6;
                 if(player2.hp <= 0){ // player2 death
                     player2.hp = 0;
                     player2.lost = true;
@@ -297,7 +298,8 @@ function update() {
         }else if(bigBullet_list[i].parent == player2){
             if(bigBullet_list[i].collide(player1)){
                 bigBullet_list[i].destroy = true;
-                player1.hp -= 70;
+                player1.hp -= 50;
+                player1.speed -=6;
                 if(player1.hp <= 0) { // player1 death
                     player1.hp = 0;
                     player1.lost = true;
