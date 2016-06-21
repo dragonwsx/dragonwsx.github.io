@@ -121,10 +121,10 @@ document.body.addEventListener('keypress', function(event){
     if (event.keyCode == 32){
         p1_input.attack1 = true;
     }
-    if (event.key == 'v'){
+    if (event.key == 'v' || event.key == 'V'){
         p1_input.attack2 = true;
     }
-    if (event.key == 'b'){
+    if (event.key == 'b' || event.key == 'B'){
         p1_input.attack3 = true;
     }
     //player2 attacks
@@ -287,7 +287,7 @@ function update() {
         if(bigBullet_list[i].parent == player1){
             if(bigBullet_list[i].collide(player2)){
                 bigBullet_list[i].destroy = true;
-                player2.hp -= 60;
+                player2.hp -= 70;
                 if(player2.hp <= 0){ // player2 death
                     player2.hp = 0;
                     player2.lost = true;
@@ -297,7 +297,7 @@ function update() {
         }else if(bigBullet_list[i].parent == player2){
             if(bigBullet_list[i].collide(player1)){
                 bigBullet_list[i].destroy = true;
-                player1.hp -= 60;
+                player1.hp -= 70;
                 if(player1.hp <= 0) { // player1 death
                     player1.hp = 0;
                     player1.lost = true;
