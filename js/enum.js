@@ -6,3 +6,4 @@ var Direction = {
 };
 
 var BULLET_COST =  20;
+var bigBullet_COST = 50;

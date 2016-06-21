@@ -40,7 +40,7 @@ function Player(x, y, col) {
         if(this.mana > this.maxMana) this.mana = this.maxMana;
         //check speed
         if(this.speed > 5){
-            this.speed -= 0.01;
+            this.speed -= 0.015;
         }
 
     };

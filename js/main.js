@@ -1,9 +1,9 @@
 /// <reference path="player.js" />
 /// <reference path="bullets.js" />
 var canvas = document.createElement('canvas'),
-    context = canvas.getContext("2d"),
-    width = canvas.width = window.innerWidth,
-    height = canvas.height = window.innerHeight;
+context = canvas.getContext("2d"),
+width = canvas.width = window.innerWidth,
+height = canvas.height = window.innerHeight;
 document.body.appendChild(canvas);
 
 // create the restart button
@@ -20,19 +20,19 @@ document.body.appendChild(restartButton);
 var player1;
 var player2;
 var bullet_list = [];
+var bigBullet_list = [];
 var manaColor;
 var hpColor;
 var backgroundColor;
-var init;
-(init = function() {
+var init = function() {
     backgroundColor = '#bdc3c7';
     hpColor = "#ff1a1a";
     manaColor = "#0066ff";
     player1 = new Player(10, height/2, "#8e44ad");
-    player2 = new Player(width - 60, height/2, "#27ae60");    
+    player2 = new Player(width - 60, height/2, "#27ae60");
     bullet_list = [];
-})();
-
+};
+init();
 
 var p1_input = {
     left: false,
@@ -40,7 +40,8 @@ var p1_input = {
     up: false,
     down:false,
     attack1: false,
-    attack2: false
+    attack2: false,
+    attack3: false
 };
 var p2_input = {
     left: false,
@@ -48,22 +49,23 @@ var p2_input = {
     up: false,
     down: false,
     attack1: false,
-    attack2: false
+    attack2: false,
+    attack3: false
 };
 
 //this is used to check for keydown
 document.body.addEventListener('keydown', function (event) {
     // player 1 input
-    if (event.key == 'w') {
+    if (event.key == 'w' || event.key == 'W') {
         p1_input.up = true;
     }
-    if (event.key == 'a') {
+    if (event.key == 'a' || event.key == 'A') {
         p1_input.left = true;
     }
-    if (event.key == 's') {
+    if (event.key == 's' || event.key == 'S') {
         p1_input.down = true;
     }
-    if (event.key == 'd') {
+    if (event.key == 'd' || event.key == 'D') {
         p1_input.right = true;
     }
 
@@ -86,16 +88,16 @@ document.body.addEventListener('keydown', function (event) {
 
 document.body.addEventListener('keyup', function (event) {
     //player 1 movement
-    if (event.key == 'w') {
+    if (event.key == 'w' || event.key == 'W') {
         p1_input.up = false;
     }
-    if (event.key == 'a') {
+    if (event.key == 'a' || event.key == 'A') {
         p1_input.left = false;
     }
-    if (event.key == 's') {
+    if (event.key == 's' || event.key == 'S') {
         p1_input.down = false;
     }
-    if (event.key == 'd') {
+    if (event.key == 'd' || event.key == 'D') {
         p1_input.right = false;
     }
 
@@ -119,8 +121,11 @@ document.body.addEventListener('keypress', function(event){
     if (event.keyCode == 32){
         p1_input.attack1 = true;
     }
-    if (event.key == 'e'){
+    if (event.key == 'v'){
         p1_input.attack2 = true;
+    }
+    if (event.key == 'b'){
+        p1_input.attack3 = true;
     }
     //player2 attacks
     if (event.key == ','){
@@ -128,6 +133,9 @@ document.body.addEventListener('keypress', function(event){
     }
     if (event.key == '.'){
         p2_input.attack2 = true;
+    }
+    if (event.key == 'm' || event.key == 'M'){
+        p2_input.attack3 = true;
     }
 });
 
@@ -173,9 +181,16 @@ function update() {
             }
         }
         if (p1_input.attack2){
-            if (player1.mana > 0 && player1.mana >= 20 && player1.speed <=9){
-                player1.speed += 1;
+            if (player1.mana >= 20 && player1.speed < 11){
+                player1.speed += 2;
                 player1.mana -= 20;
+            }
+        }
+        if (p1_input.attack3){
+            if(player1.mana >= bigBullet_COST){
+                var b = new bigBullet(player1.x + player1.size/2, player1.y+player1.size/2, player1.dir, player1.color, player1);
+                bigBullet_list.push(b);
+                player1.mana -= b.cost;
             }
         }
     }
@@ -184,19 +199,19 @@ function update() {
     if(!player2.lost){
         if (p2_input.left){
             if(!player2.collideLeft(player1)){
-                player2.dir = Direction.LEFT;   
+                player2.dir = Direction.LEFT;
                 player2.x -= player2.speed;
             }
         }
         if (p2_input.right) {
             if(!player2.collideRight(player1)){
-                player2.dir = Direction.RIGHT;    
+                player2.dir = Direction.RIGHT;
                 player2.x += player2.speed;
             }
         }
         if (p2_input.up) {
             if(!player2.collideUp(player1)){
-                player2.dir = Direction.UP;    
+                player2.dir = Direction.UP;
                 player2.y -= player2.speed;
             }
         }
@@ -215,9 +230,16 @@ function update() {
             }
         }
         if (p2_input.attack2){
-            if (player2.mana > 0 && player2.mana >= 20 && player2.speed <=9){
-                player2.speed += 1;
+            if (player2.mana >= 20 && player2.speed < 11){
+                player2.speed += 2;
                 player2.mana -= 20;
+            }
+        }
+        if (p2_input.attack3){
+            if (player2.mana >= bigBullet_COST){
+                var b = new bigBullet(player2.x + player2.size/2, player2.y+player2.size/2, player2.dir, player2.color, player2);
+                bigBullet_list.push(b);
+                player2.mana -= bigBullet_COST;
             }
         }
     }
@@ -255,10 +277,42 @@ function update() {
         }
     }
 
+    for (var i= bigBullet_list.length-1; i >= 0; i--){
+        bigBullet_list[i].update();
+        if (bigBullet_list[i].destroy){
+            bigBullet_list.splice(i, 1);
+            continue;
+        }
+
+        if(bigBullet_list[i].parent == player1){
+            if(bigBullet_list[i].collide(player2)){
+                bigBullet_list[i].destroy = true;
+                player2.hp -= 60;
+                if(player2.hp <= 0){ // player2 death
+                    player2.hp = 0;
+                    player2.lost = true;
+                    restartButton.style.display = "block";
+                }
+            }
+        }else if(bigBullet_list[i].parent == player2){
+            if(bigBullet_list[i].collide(player1)){
+                bigBullet_list[i].destroy = true;
+                player1.hp -= 60;
+                if(player1.hp <= 0) { // player1 death
+                    player1.hp = 0;
+                    player1.lost = true;
+                    restartButton.style.display = "block";
+                }
+            }
+        }
+    }
+
     p1_input.attack1 = false;
     p1_input.attack2 = false;
+    p1_input.attack3 = false;
     p2_input.attack1 = false;
     p2_input.attack2 = false;
+    p2_input.attack3 = false;
 }
 
 var scl = 3;
@@ -282,6 +336,10 @@ function draw() {
     // draw bullets
     for (var i = bullet_list.length-1; i >= 0; i--){
         bullet_list[i].draw(context);
+    }
+    // draw big bullets
+    for (var i = bigBullet_list.length-1; i >= 0; i--){
+        bigBullet_list[i].draw(context);
     }
 
     if(player1.lost || player2.lost){
