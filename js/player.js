@@ -9,6 +9,7 @@ function Player(x, y, col) {
     this.lost = false;
     this.hp = 200;
     this.mana = 200;
+    this.img = new Image(this.size, this.size);
 
     this.manaRegenSpeed = 0.2;
     var self = this;
@@ -90,7 +91,8 @@ function Player(x, y, col) {
     };
 
     this.draw = function(ctx){
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.size, this.size);
+        // ctx.fillStyle = this.color;
+        // ctx.fillRect(this.x, this.y, this.size, this.size);
+        ctx.drawImage(this.img, this.x, this.y);
     };
 }

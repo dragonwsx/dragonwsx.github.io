@@ -76,7 +76,7 @@ var bigBullet = function(x, y, d, c, p){
     this.collide = function (pl) {
         var dx = (pl.x+pl.size/2) - (this.x), dy = (pl.y+pl.size/2) - (this.y);
         var dist = Math.sqrt(dx*dx + dy*dy);
-        if(dist <= 30) return true;
+        if(dist <= 50) return true;
         return false;
     };
 

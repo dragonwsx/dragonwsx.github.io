@@ -29,7 +29,9 @@ var init = function() {
     hpColor = "#ff1a1a";
     manaColor = "#0066ff";
     player1 = new Player(10, height/2, "#8e44ad");
+    player1.img.src = "res/player1.png";
     player2 = new Player(width - 60, height/2, "#27ae60");
+    player2.img.src = "res/player2.png";
     bullet_list = [];
 };
 init();
@@ -121,10 +123,10 @@ document.body.addEventListener('keypress', function(event){
     if (event.keyCode == 32){
         p1_input.attack1 = true;
     }
-    if (event.key == 'v' || event.key == 'V'){
+    if (event.key == 'x' || event.key == 'X'){
         p1_input.attack2 = true;
     }
-    if (event.key == 'b' || event.key == 'B'){
+    if (event.key == 'c' || event.key == 'C'){
         p1_input.attack3 = true;
     }
     //player2 attacks
@@ -134,7 +136,7 @@ document.body.addEventListener('keypress', function(event){
     if (event.key == '.'){
         p2_input.attack2 = true;
     }
-    if (event.key == 'm' || event.key == 'M'){
+    if (event.key == '/' ){
         p2_input.attack3 = true;
     }
 });
